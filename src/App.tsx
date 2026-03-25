@@ -1,28 +1,27 @@
-
+import { useState } from "react";
 import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Index from "./pages/Index";
-import NotFound from "./pages/NotFound";
+import HomePage from "@/pages/HomePage";
+import CartoonPage from "@/pages/CartoonPage";
+import TvPage from "@/pages/TvPage";
+import Navigation from "@/components/Navigation";
 
-const queryClient = new QueryClient();
+export type Page = "home" | "cartoons" | "tv";
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
+export default function App() {
+  const [currentPage, setCurrentPage] = useState<Page>("home");
+
+  return (
     <TooltipProvider>
       <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Index />} />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
+      <div className="min-h-screen bg-background star-bg font-nunito">
+        <Navigation currentPage={currentPage} onNavigate={setCurrentPage} />
+        <main>
+          {currentPage === "home" && <HomePage onNavigate={setCurrentPage} />}
+          {currentPage === "cartoons" && <CartoonPage />}
+          {currentPage === "tv" && <TvPage />}
+        </main>
+      </div>
     </TooltipProvider>
-  </QueryClientProvider>
-);
-
-export default App;
+  );
+}
