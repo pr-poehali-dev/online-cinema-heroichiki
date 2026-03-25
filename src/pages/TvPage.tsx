@@ -1,10 +1,15 @@
 import { useState } from "react";
 import Icon from "@/components/ui/icon";
+import HlsPlayer from "@/components/HlsPlayer";
 
 type TvTab = "all" | "kids";
 
 const CHANNEL_STREAMS: Record<number, string> = {
-  1: "https://rutube.ru/play/embed/c58f502c7bb34a8fcdd976b221fca292/",
+  1: "https://edge1.vещатель.рф/perviy/index.m3u8",
+  2: "https://edge1.vещатель.рф/russia1/index.m3u8",
+  3: "https://edge1.vещатель.рф/ntv/index.m3u8",
+  9: "https://edge1.vещатель.рф/matchtv/index.m3u8",
+  101: "https://edge1.vещатель.рф/karusel/index.m3u8",
 };
 
 const ALL_CHANNELS = [
@@ -154,12 +159,9 @@ export default function TvPage() {
                 <span className="text-white font-rubik font-bold text-sm">🔴 ПРЯМОЙ ЭФИР — {selectedChannel.name}</span>
               </div>
               <div className="relative w-full" style={{ paddingBottom: "56.25%" }}>
-                <iframe
-                  src={CHANNEL_STREAMS[selectedChannel.id]}
-                  className="absolute inset-0 w-full h-full"
-                  allow="autoplay; encrypted-media; fullscreen; picture-in-picture"
-                  allowFullScreen
-                />
+                <div className="absolute inset-0">
+                  <HlsPlayer src={CHANNEL_STREAMS[selectedChannel.id]} className="w-full h-full" />
+                </div>
               </div>
             </div>
           )}
