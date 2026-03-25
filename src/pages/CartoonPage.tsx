@@ -21,6 +21,9 @@ const SERIES = [
       { season: 1, episodes: 13, color: "from-purple-600 to-blue-600" },
       { season: 2, episodes: 13, color: "from-pink-600 to-purple-600" },
     ],
+    episodeLinks: {
+      "1-1": "https://vk.com/video_ext.php?oid=-226802088&id=456256649&hd=2",
+    },
   },
   {
     id: 2,
@@ -46,12 +49,13 @@ const SERIES = [
 export default function CartoonPage() {
   const [selectedSeries, setSelectedSeries] = useState<number | null>(null);
   const [selectedSeason, setSelectedSeason] = useState(1);
+  const [playingEpisode, setPlayingEpisode] = useState<string | null>(null);
 
   const selected = SERIES.find((s) => s.id === selectedSeries);
 
   if (selected) {
     const seasonData = selected.seasonsData.find((s) => s.season === selectedSeason);
-    const episodeCount = seasonData?.episodeCount ?? seasonData?.episodes ?? 0;
+    const episodeLinks = (selected as typeof selected & { episodeLinks?: Record<string, string> }).episodeLinks ?? {};
 
     return (
       <div className="animate-fade-in">
@@ -123,7 +127,7 @@ export default function CartoonPage() {
               {selected.seasonsData.map((s) => (
                 <button
                   key={s.season}
-                  onClick={() => setSelectedSeason(s.season)}
+                  onClick={() => { setSelectedSeason(s.season); setPlayingEpisode(null); }}
                   className={`px-5 py-2 rounded-2xl font-rubik font-bold text-sm transition-all duration-200 ${
                     selectedSeason === s.season
                       ? "bg-bor-yellow text-background shadow-lg scale-105"
@@ -134,19 +138,64 @@ export default function CartoonPage() {
                 </button>
               ))}
             </div>
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
-              {Array.from({ length: seasonData?.episodes ?? 0 }, (_, i) => (
-                <div
-                  key={i}
-                  className="rounded-2xl bg-muted p-4 flex flex-col items-center text-center hover:bg-muted/60 transition-colors cursor-pointer group border border-border/50 hover:border-bor-yellow/40"
-                >
-                  <div className="w-10 h-10 rounded-xl bg-bor-yellow/10 flex items-center justify-center mb-2 group-hover:bg-bor-yellow/20 transition-colors">
-                    <Icon name="Play" size={18} className="text-bor-yellow ml-0.5" />
-                  </div>
-                  <div className="text-white font-rubik font-bold text-sm">Серия {i + 1}</div>
-                  <div className="text-white/40 text-xs mt-1">Название скоро</div>
+            {/* Player */}
+            {playingEpisode && (
+              <div className="mb-6 rounded-3xl overflow-hidden border border-bor-yellow/40 shadow-2xl">
+                <div className="bg-black/60 px-4 py-3 flex items-center justify-between">
+                  <span className="text-white font-rubik font-bold text-sm">
+                    🎬 {selected.title} — Сезон {selectedSeason}, Серия {playingEpisode.split("-")[1]}
+                  </span>
+                  <button
+                    onClick={() => setPlayingEpisode(null)}
+                    className="text-white/50 hover:text-white transition-colors"
+                  >
+                    <Icon name="X" size={18} />
+                  </button>
                 </div>
-              ))}
+                <div className="relative w-full" style={{ paddingBottom: "56.25%" }}>
+                  <iframe
+                    src={episodeLinks[playingEpisode]}
+                    className="absolute inset-0 w-full h-full"
+                    allow="autoplay; encrypted-media; fullscreen; picture-in-picture"
+                    allowFullScreen
+                  />
+                </div>
+              </div>
+            )}
+
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+              {Array.from({ length: seasonData?.episodes ?? 0 }, (_, i) => {
+                const key = `${selectedSeason}-${i + 1}`;
+                const hasLink = !!episodeLinks[key];
+                const isPlaying = playingEpisode === key;
+                return (
+                  <div
+                    key={i}
+                    onClick={() => hasLink && setPlayingEpisode(isPlaying ? null : key)}
+                    className={`rounded-2xl p-4 flex flex-col items-center text-center transition-all duration-200 border ${
+                      isPlaying
+                        ? "bg-bor-yellow/15 border-bor-yellow/60 shadow-lg scale-105"
+                        : hasLink
+                        ? "bg-muted cursor-pointer hover:bg-muted/60 border-border/50 hover:border-bor-yellow/40"
+                        : "bg-muted/40 border-border/30 opacity-60 cursor-default"
+                    }`}
+                  >
+                    <div className={`w-10 h-10 rounded-xl flex items-center justify-center mb-2 transition-colors ${
+                      isPlaying ? "bg-bor-yellow/30" : hasLink ? "bg-bor-yellow/10 group-hover:bg-bor-yellow/20" : "bg-white/5"
+                    }`}>
+                      <Icon
+                        name={isPlaying ? "Pause" : "Play"}
+                        size={18}
+                        className={hasLink ? "text-bor-yellow ml-0.5" : "text-white/20 ml-0.5"}
+                      />
+                    </div>
+                    <div className="text-white font-rubik font-bold text-sm">Серия {i + 1}</div>
+                    <div className={`text-xs mt-1 ${hasLink ? "text-bor-green font-semibold" : "text-white/30"}`}>
+                      {hasLink ? "Смотреть" : "Скоро"}
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           </div>
         </div>
