@@ -3,6 +3,10 @@ import Icon from "@/components/ui/icon";
 
 type TvTab = "all" | "kids";
 
+const CHANNEL_STREAMS: Record<number, string> = {
+  1: "https://vk.com/video_ext.php?oid=-25380626&id=456283287&hd=2",
+};
+
 const ALL_CHANNELS = [
   { id: 1, name: "Первый канал", category: "Новости", emoji: "📰", color: "bg-blue-600" },
   { id: 2, name: "Россия 1", category: "Развлечения", emoji: "🎭", color: "bg-red-600" },
@@ -142,6 +146,24 @@ export default function TvPage() {
         </div>
 
         <div className="container mx-auto px-4 py-6">
+          {/* Live Player */}
+          {CHANNEL_STREAMS[selectedChannel.id] && (
+            <div className="mb-6 rounded-3xl overflow-hidden border border-bor-green/40 shadow-2xl">
+              <div className="bg-black/60 px-4 py-3 flex items-center gap-3">
+                <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>
+                <span className="text-white font-rubik font-bold text-sm">🔴 ПРЯМОЙ ЭФИР — {selectedChannel.name}</span>
+              </div>
+              <div className="relative w-full" style={{ paddingBottom: "56.25%" }}>
+                <iframe
+                  src={CHANNEL_STREAMS[selectedChannel.id]}
+                  className="absolute inset-0 w-full h-full"
+                  allow="autoplay; encrypted-media; fullscreen; picture-in-picture"
+                  allowFullScreen
+                />
+              </div>
+            </div>
+          )}
+
           <div className="flex items-center justify-between mb-5">
             <h2 className="font-rubik font-bold text-xl text-white">📋 Программа на сегодня</h2>
             <div className="flex items-center gap-2 px-4 py-2 rounded-2xl bg-bor-yellow/10 border border-bor-yellow/30">
@@ -261,8 +283,10 @@ export default function TvPage() {
             <div className="text-white font-rubik font-bold text-sm leading-tight mb-1">{channel.name}</div>
             <div className="text-white/40 text-xs font-semibold">{channel.category}</div>
             <div className="mt-2 flex items-center gap-1">
-              <span className="w-1.5 h-1.5 rounded-full bg-bor-green animate-pulse"></span>
-              <span className="text-bor-green text-xs font-bold">В эфире</span>
+              <span className={`w-1.5 h-1.5 rounded-full animate-pulse ${CHANNEL_STREAMS[channel.id] ? "bg-red-500" : "bg-bor-green"}`}></span>
+              <span className={`text-xs font-bold ${CHANNEL_STREAMS[channel.id] ? "text-red-400" : "text-bor-green"}`}>
+                {CHANNEL_STREAMS[channel.id] ? "🔴 Прямой эфир" : "В эфире"}
+              </span>
             </div>
           </div>
         ))}
