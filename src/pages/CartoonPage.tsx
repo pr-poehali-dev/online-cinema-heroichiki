@@ -23,6 +23,10 @@ const SERIES = [
     ],
     episodeLinks: {
       "1-1": "https://vk.com/video_ext.php?oid=-226802088&id=456256649&hd=2",
+      "1-2": "https://vk.com/video_ext.php?oid=-226802088&id=456256650&hd=2",
+      "1-3": "https://vk.com/video_ext.php?oid=-226802088&id=456256651&hd=2",
+      "1-4": "https://vk.com/video_ext.php?oid=-226802088&id=456256652&hd=2",
+      "1-5": "https://vk.com/video_ext.php?oid=-226802088&id=456256653&hd=2",
     },
   },
   {
