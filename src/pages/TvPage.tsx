@@ -4,7 +4,7 @@ import Icon from "@/components/ui/icon";
 type TvTab = "all" | "kids";
 
 const CHANNEL_STREAMS: Record<number, string> = {
-  1: "https://vk.com/video_ext.php?oid=-25380626&id=456283287&hd=2",
+  1: "https://rutube.ru/play/embed/c58f502c7bb34a8fcdd976b221fca292/",
 };
 
 const ALL_CHANNELS = [
